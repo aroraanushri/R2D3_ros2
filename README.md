@@ -2,7 +2,7 @@
 
 [English](./README.md)
 
-# rmc_aida_l_ros2
+# Open Droids - R2D3
 
 <img src="./pic/dual_lift_robot.png" alt="pic" style="zoom:50%;" />
 
