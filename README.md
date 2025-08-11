@@ -4,7 +4,7 @@
 
 # Open Droids - R2D3
 
-<img src="./pic/dual_lift_robot.png" alt="pic" style="zoom:50%;" />
+<img src="./pic/dual_lift_robot.jpg" alt="pic" style="zoom:50%;" />
 
 This package primarily provides ROS2 support for the RM dual-arm composite lifting robot. Below are the requirements.
 
