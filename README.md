@@ -77,8 +77,18 @@ sudo bash lib_install.sh
 
 Install chassis Ros2 interface installation package
 Execute in the path of~/ros_2agv_robot/lib
-```bash
+
+link to lib : https://seafile.wsrobotics.com/d/9fee6b1fda3b4403919c/?p=%2F%E8%BD%AF%E4%BB%B6%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91%E6%8E%A5%E5%8F%A3%2F%E5%BA%94%E7%94%A8%E5%B1%82ROS2%E6%8E%A5%E5%8F%A3%2Fv0.0.1&mode=list 
+
+(if on Jetson)
+```bash 
+cd ros2_agv_robot/lib/
 sudo ./ros-foxy-woosh-robot-agent_0.0.1-0focal_arm64.run
+```
+(if on other Arch(laptop or sim env))
+```bash
+cd ros2_agv_robot/lib/
+sudo ./ros-foxy-woosh-robot-agent_0.0.1-0focal_amd64.run
 ```
 
 ### Compile
