@@ -106,6 +106,12 @@ ros2 service call /woosh_robot/robot/Twist woosh_robot_msgs/srv/Twist "{arg:{lin
 
 ---
 
+### 7. Voice Broadcast
+Make the robot speak.
+
+```bash
+ros2 service call /woosh_robot/robot/Speak woosh_robot_msgs/srv/Speak "{arg:{text: 'Hello World'}}"
+```
 
 ---
 
@@ -127,6 +133,100 @@ ros2 service call /woosh_robot/robot/Twist woosh_robot_msgs/srv/Twist "{arg:{lin
 - Navigation and task actions provide **feedback** for progress tracking.  
 
 ---
+
+© 2025 WooshRobot (original documentation).  
+This file is a **developer-friendly summary** created for GitHub-safe usage.
+
+
+---
+
+# ros2_agv_robot Project Notes
+
+## **1. Project Introduction**
+`ros2_agv_robot` is a ROS2 chassis package for embossed two-arm robots.  
+It provides demos and test cases for various chassis-related functions.
+
+### Functions implemented:
+1. Request robot information  
+2. Subscribe to robot information  
+3. Subscribe to the robot status  
+4. Subscribe to mode information  
+5. Subscribe to position speed  
+6. Subscribe to battery information  
+7. Subscribe to scene information  
+8. Subscribe to task progress  
+9. Subscribe to device status  
+10. Subscribe to run status  
+11. Task execution  
+12. Wait for the task execution result  
+13. Task execution request  
+14. Callbacks in task execution process  
+15. Perform predefined tasks  
+16. Stepping process callback  
+17. Stepping execution request  
+18. Wait for stepping execution results  
+
+---
+
+## **2. File Structure**
+
+```bash
+├── ros2_agv_robot           # 底盘功能包
+│   ├── CMakeLists.txt       # 编译规则文件
+│   ├── lib                  # ros2接口安装包
+│   ├── package.xml          # 定义功能包属性文件
+│   └── src                  # 测试代码目录
+```
+
+---
+
+## **3. Compilation Method**
+
+1. Install the chassis ROS2 interface installation package:
+
+```bash
+cd ~/ros2_agv_robot/lib
+sudo ./ros-foxy-woosh-robot-agent_0.0.1-0focal_arm64.run
+```
+
+2. Compile and test demo:
+
+```bash
+cd ros2_ws/     # 进入工作空间目录
+colcon build --packages-select ros2_agv_robot
+```
+
+---
+
+## **4. Run Commands**
+
+1. Start the chassis connection node:
+
+```bash
+ros2 run woosh_robot_agent agent --ros-args -r __ns:=/woosh_robot -p ip:="169.254.128.2"
+# or
+ros2 run woosh_robot_agent agent --ros-args -r __ns:=/woosh_robot
+```
+
+2. Run test/demo functions:
+
+```bash
+ros2 run ros2_agv_robot monitor
+# Execute the monitor node to obtain robot information
+
+ros2 run ros2_agv_robot executeask --ros-args -p mark_no:=7613B5D
+# When a certain storage bit is reached (7613B5D), 
+# you need to create a map in advance, initialize the robot, and then execute.
+
+ros2 run ros2_agv_robot exec_pre_task --ros-args -p id:=1735291765
+# Execute the task (1735291765), requires creating the map and initializing the robot first.
+
+ros2 run ros2_agv_robot stepctrl
+# Step control
+```
+
+---
+
 
 © 2025 WooshRobot (original documentation).  
 This file is a **developer-friendly summary** created for GitHub-safe usage.
