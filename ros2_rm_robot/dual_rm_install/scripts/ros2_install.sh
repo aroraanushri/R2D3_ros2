@@ -42,9 +42,9 @@ sudo sed -i 's/^%sudo.*/%sudo ALL=(ALL) NOPASSWD:ALL/g' /etc/sudoers
 
 # Get architecture of the system
 if [ $(uname -m) = "x86_64" ]; then
-  MIRROR="https://mirrors.tuna.tsinghua.edu.cn/ubuntu/"
+  MIRROR="http://us.archive.ubuntu.com/ubuntu/"
 else
-  MIRROR="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/"
+  MIRROR="http://ports.ubuntu.com/ubuntu-ports/"
 fi
 echo "Current system architecture is: $(uname -m)"
 echo "Current mirror is: $MIRROR"
@@ -61,7 +61,7 @@ sudo echo "" > /etc/apt/sources.list.d/realman_ros2.list
 echo "deb $MIRROR focal main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR focal-updates main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR focal-backports main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb [arch=$(dpkg --print-architecture)] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" >> /etc/apt/sources.list.d/realman_ros2.list
+echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" >> /etc/apt/sources.list.d/realman_ros2.list
 
 
 if [ $(uname -m) = "x86_64" ]; then
@@ -82,7 +82,7 @@ sudo echo "" > /etc/apt/sources.list.d/realman_ros2.list
 echo "deb $MIRROR jammy main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR jammy-updates main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR jammy-backports main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb [arch=$(dpkg --print-architecture)] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu jammy main" >> /etc/apt/sources.list.d/realman_ros2.list
+echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu jammy main" >> /etc/apt/sources.list.d/realman_ros2.list
 if [ $(uname -m) = "x86_64" ]; then
   echo "deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse" >> /etc/apt/sources.list
 else
@@ -112,9 +112,8 @@ sudo apt-get install pip -y # If you haven't already installed pip
 # Install gnome-terminal
 sudo apt-get install gnome-terminal -y # If you haven't already installed gnome-terminal
 
-# Set default pip source
-pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple
-pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+# Set default pip source (using official PyPI)
+pip config set global.index-url https://pypi.org/simple/
 
 # Add the ROS key
 # ros_key="${SCRIPT_DIR}/ros.key"
@@ -170,7 +169,7 @@ source /home/$USERNAME/.bashrc
 # https://pypi.org/project/rosdepc/#files
 sudo pip install rosdep
 sudo pip install rosdepc
-# sudo pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U rosdep
+# sudo pip install -i https://pypi.org/simple -U rosdep
 # Init & update rosdep 
 sudo rosdepc init > /dev/null
 #sudo rosdep fix-permissions
