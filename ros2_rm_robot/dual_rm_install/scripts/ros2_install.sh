@@ -16,6 +16,9 @@ if [ "$(id -u)" != "0" ]; then
     read -p "Press any key to exit..."
     exit 1
 fi
+
+
+
 # Get script directory
 SCRIPT_DIR=$(dirname "$0")
 # Get the username of the non-root user
@@ -40,11 +43,16 @@ echo "Installation errors will be saved to ${ERR_FILE}"
 # No Password sudo config
 sudo sed -i 's/^%sudo.*/%sudo ALL=(ALL) NOPASSWD:ALL/g' /etc/sudoers
 
+# Install Curl
+sudo apt-get install curl -y # If you haven't already installed curl
+sudo apt-get install software-properties-common -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
 # Get architecture of the system
-if [ $(uname -m) = "x86_64" ]; then
-  MIRROR="https://mirrors.tuna.tsinghua.edu.cn/ubuntu/"
+if [ "$(uname -m)" = "x86_64" ]; then
+  MIRROR="http://us.archive.ubuntu.com/ubuntu/"
 else
-  MIRROR="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/"
+  MIRROR="http://ports.ubuntu.com/ubuntu-ports/"
 fi
 echo "Current system architecture is: $(uname -m)"
 echo "Current mirror is: $MIRROR"
@@ -54,14 +62,14 @@ if [ $Ubuntu_version = "20.04" ]; then
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/realman_ros2.list
 # Clear original software sources
-sudo echo "" > /etc/apt/sources.list
+
 sudo echo "" > /etc/apt/sources.list.d/realman_ros2.list
 
 # Replace software sources
 echo "deb $MIRROR focal main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR focal-updates main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR focal-backports main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb [arch=$(dpkg --print-architecture)] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" >> /etc/apt/sources.list.d/realman_ros2.list
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" >> /etc/apt/sources.list.d/realman_ros2.list
 
 
 if [ $(uname -m) = "x86_64" ]; then
@@ -75,14 +83,14 @@ elif [ $Ubuntu_version = "22.04" ]; then
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/realman_ros2.list
 # Clear original software sources
-sudo echo "" > /etc/apt/sources.list
+
 sudo echo "" > /etc/apt/sources.list.d/realman_ros2.list
 
 # Replace software sources
 echo "deb $MIRROR jammy main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR jammy-updates main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb $MIRROR jammy-backports main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb [arch=$(dpkg --print-architecture)] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu jammy main" >> /etc/apt/sources.list.d/realman_ros2.list
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" >> /etc/apt/sources.list.d/realman_ros2.list
 if [ $(uname -m) = "x86_64" ]; then
   echo "deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse" >> /etc/apt/sources.list
 else
@@ -95,10 +103,6 @@ else
     exit 1
 fi
 
-# Install Curl
-sudo apt-get install curl -y # If you haven't already installed curl
-sudo apt-get install software-properties-common -y
-sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 
 # System update
 sudo apt-get update
@@ -113,8 +117,8 @@ sudo apt-get install pip -y # If you haven't already installed pip
 sudo apt-get install gnome-terminal -y # If you haven't already installed gnome-terminal
 
 # Set default pip source
-pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple
-pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+pip config set global.index-url https://pypi.org/simple
+
 
 # Add the ROS key
 # ros_key="${SCRIPT_DIR}/ros.key"
@@ -170,7 +174,7 @@ source /home/$USERNAME/.bashrc
 # https://pypi.org/project/rosdepc/#files
 sudo pip install rosdep
 sudo pip install rosdepc
-# sudo pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U rosdep
+# sudo pip install -i https://pypi.org/simple -U rosdep
 # Init & update rosdep 
 sudo rosdepc init > /dev/null
 #sudo rosdep fix-permissions

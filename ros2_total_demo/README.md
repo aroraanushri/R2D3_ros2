@@ -1,7 +1,7 @@
-## **1. Project introduction**
-ros2_total_demo is an overall test of the two-arm composite robot package.Including camera, lift, double arms, head servo
+## **1. Project Introduction**
+ros2_total_demo is an overall test of the two-arm composite robot package. Including camera, lift, double arms, head servo
 
-## **2. File structure**
+## **2. File Structure**
 ```bash
 ├── CMakeLists.txt
 ├── include
@@ -21,13 +21,13 @@ ros2_total_demo is an overall test of the two-arm composite robot package.Includ
     └── total_demo_node.cpp
 ```
 
-## **3. Compilation method**
+## **3. Compilation Method**
 ```bash
 cd rmc_aida_l_ros2/     # Enter the workspace directory
 colcon build --packages-select ros2_total_demo
 ```
 
-## **4. Run commands**
+## **4. Run Commands**
 
 - 1.Launch the launch of the overall ros2 function package
 
@@ -40,6 +40,6 @@ ros2 launch ros2_total_demo total_demo.launch.py           # Two arms, head serv
 - 2.Use cases for starting function package function：
 
 ```bash
-ros2 run ros2_total_demo total_demo_node                   # Start the overalldemo
+ros2 run ros2_total_demo total_demo_node                   # Start the overall demo
 ```
 

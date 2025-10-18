@@ -1,17 +1,17 @@
-## **1. Project introduction**
-ros2_rm_robotIt is a ros2 double-arm package for the embossed double-arm lifting robot.The functions implemented are：
+## **1. Project Introduction**
+ros2_rm_robot is a ROS2 dual-arm package for the embossed dual-arm lifting robot. The implemented functions include:
 Current test: The controller version is `1.6.5`
 
 1. moveit2 control robot arm
 
 There are also demo test cases for various functions
 
-## **2. File structure**
+## **2. File Structure**
 ```bash
-├── dual_rm_moveit_config        # Double-arm lifting Moveit configuration function pack
+├── dual_rm_moveit_config        # Dual-arm lifting Moveit configuration function package
 │   ├── dual_rm_65b_moveit_config
 │   └── dual_rm_75b_moveit_config
-├── dual_rm_control                        # Double-arm controller function pack
+├── dual_rm_control                        # Dual-arm controller function package
 │   ├── CMakeLists.txt
 │   ├── doc                                # Store information documents
 │   ├── include
@@ -20,7 +20,7 @@ There are also demo test cases for various functions
 │   ├── README_CN.md
 │   ├── README.md
 │   └── src
-├── dual_rm_driver                         # Double-arm drive function pack
+├── dual_rm_driver                         # Dual-arm drive function package
 │   └── rm_driver  
 │       ├── CMakeLists.txt
 │       ├── config
@@ -30,7 +30,7 @@ There are also demo test cases for various functions
 │       ├── lib                            # Store library files
 │       ├── package.xml
 │       └── src
-├── dual_rm_description           # Double-arm robot description function pack
+├── dual_rm_description           # Dual-arm robot description function package
 │   ├── CMakeLists.txt
 │   ├── config
 │   ├── launch
@@ -53,13 +53,13 @@ There are also demo test cases for various functions
         └── README.md
 ```
 
-## **3. Compilation method**
+## **3. Compilation Method**
 ```bash
 cd rm_dual_arm_robot_ros2/     # Enter the workspace directory
 colcon build --packages-select rm_ros_interfaces dual_rm_65b_description dual_rm_75b_description rm_driver dual_rm_control dual_rm_65b_moveit_config dual_rm_75b_moveit_config  
 ```
 
-## **4. Run commands**
+## **4. Run Commands**
 
 ```
 

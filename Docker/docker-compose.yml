@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  r2d3_ros2:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile
+    image: r2d3_ros2:foxy
+    container_name: r2d3_ros2
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=graphics
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./:/workspace
+    devices:
+      - /dev/bus/usb
+    stdin_open: true
+    tty: true
+    command: bash
+    networks:
+      - r2d3_network
+
+networks:
+  r2d3_network:
+    driver: bridge

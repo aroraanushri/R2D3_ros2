@@ -19,7 +19,7 @@ This package primarily provides ROS2 support for the RM dual-arm composite lifti
 | camera                                                         | Realsense D435C                                     | ros2_realsense2                                              |
 | Main control                                                         | jetson xavier NX                                    | ubuntu20.04 、ros-foxy                                       |
 | Chassis                                                         | woosh                                               | API version 0.10.8, socket communication                                    |
-| Head motor/lift                                              | WHJ30-80关节                                        | Used as the expansion axis of the robot arm, the head joint is connected to the right arm as the expansion joint, and the lift and lower joint is connected to the left arm as the expansion joint. |
+| Head motor/lift                                              | WHJ30-80 joint                                        | Used as the expansion axis of the robot arm, the head joint is connected to the right arm as the expansion joint, and the lift and lower joint is connected to the left arm as the expansion joint. |
 | End Tool (optional)                                             | EG2-4C2 claws/Dexterous hand (right hand RM56DFX-2R/Left hand) RM56DFX-2L） | Integration with robotic arm API and ROS packages                                       |
 | Voice module                                                     | Fun M240 microphone array                                 | Voice module information V5.1（https://pan.baidu.com/e/1nVS8SXqZWn5scmidNqWb7w?_at_=1724069216106） |
 |  |                                                     |                                                              |
@@ -30,11 +30,28 @@ For more information about the bot topic service function, see[List of services 
 
 The following is the installation and use tutorial of the package.
 
+## Docker Implementation
+
+For containerized deployment and development, this project includes Docker support. The Docker setup provides a complete ROS2 Foxy environment with NVIDIA GPU support.
+
+**Quick Start:**
+```bash
+# Build the Docker image
+docker build -t r2d3_ros2:foxy ./Docker
+
+# Run with GPU support
+docker run -it --rm --gpus all r2d3_ros2:foxy
+```
+
+For detailed Docker instructions, prerequisites, troubleshooting, and advanced usage, please refer to the [Docker README](Docker/README.md).
+
+---
+
 ## 1\. Build the environment
 ---
 Before using the package, we first need to do the following operations.
 
-* 1.[Install ROS2](#1.Install_ROS2)
+* 1.[Install ROS2](#1.Install_ROS2) # skip if already installed 
 * 2.[Install Moveit2](#Install_Moveit2)
 * 3.[Configure the package environment](#Configure_the_package_environment)
 * 4.[Compile](#Compile)
@@ -101,7 +118,7 @@ colcon build
 
 After the compilation is completed, the package can be run.
 
-For more MoveIt configuration information, see[Embodied arms lifting ROS2-foxy-moveit2 configuration tutorial](./双臂复合升降ROS2-foxy-moveit2 configuration tutorial.pdf)|
+For more MoveIt configuration information, see[Embodied arms lifting ROS2-foxy-moveit2 configuration tutorial](./Dual-arm composite lifting ROS2-foxy-moveit2 configuration tutorial.pdf)|
 
 ## 2\. Function running
 

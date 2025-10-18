@@ -6,7 +6,7 @@ ros2_servo_driver It is a ros2 head servo package for a double-arm composite rob
 
 There are also demo test cases for various functions
 
-## **2. File structure**
+## **2. File Structure**
 ```bash
 ├── servo_driver            # Servo driver function package
 │   ├── CMakeLists.txt
@@ -28,7 +28,7 @@ There are also demo test cases for various functions
     └── src
 ```
 
-## **3. Compilation method**
+## **3. Compilation Method**
 ```bash
 cd rm_dual_arm_robot_ros2/ros2_servo_driver/servo_driver/scripts
 # Execute the udev script and restart the device after execution
@@ -38,9 +38,9 @@ cd rm_dual_arm_robot_ros2/
 colcon build --packages-select servo_interfaces servo_driver servo_example 
 ```
 
-## **4. Run commands**
+## **4. Run Commands**
 
-- 1.Start the overall ros2 function packagelaunch
+- 1.Start the overall ros2 function package launch
 
 ```bash
 cd rm_dual_arm_robot_ros2/ 

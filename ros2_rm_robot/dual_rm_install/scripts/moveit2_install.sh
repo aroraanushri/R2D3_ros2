@@ -40,7 +40,7 @@ if [[ "$(sudo -u $USERNAME dpkg -l ros-foxy-desktop)" == *ii* ]]; then
 elif [[ "$(sudo -u $USERNAME dpkg -l ros-humble-desktop)" == *ii* ]]; then
     echo "ROS2 humble check passed"
 else
-    echo "This script must be run with ROS2 HumbleorFoxy-desktop-full"
+    echo "This script must be run with ROS2 Humble orFoxy-desktop-full"
     read -p "Press any key to exit..."
     exit 1
 fi
