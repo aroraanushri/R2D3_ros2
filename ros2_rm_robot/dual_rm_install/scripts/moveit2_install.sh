@@ -55,16 +55,8 @@ rm -f ${ERR_FILE}
 exec 1> >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${ERR_FILE} >&2)
 
-# Add GitHub520 Host to host for GitHub access in China
-# https://github.com/521xueweihan/GitHub520
+# Install curl if needed
 sudo apt-get install curl -y
-sudo sed -i "/# GitHub520 Host Start/Q" /etc/hosts && curl https://raw.hellogithub.com/hosts >> /etc/hosts
-echo "GitHub520 Host added to host file"
-# sudo sed -i 's/#DNS=/DNS=114.114.114.114/' /etc/systemd/resolved.conf
-# echo "DNS server changed to 114.114.114.114"
-sudo systemctl restart systemd-resolved.service
-echo "Refreshed network settings, sleep 5 seconds"
-sleep 5
 
 # Install wstool
 sudo apt-get install python3-wstool -y
