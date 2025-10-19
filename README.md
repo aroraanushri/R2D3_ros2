@@ -6,11 +6,23 @@
 
 <img src="./pic/dual_lift_robot.jpg" alt="pic" style="zoom:50%;" />
 
-This package primarily provides ROS2 support for the RM dual-arm composite lifting robot. Below are the requirements.
+This package provides comprehensive ROS2 support for the **OpenDroids R2D3 dual-arm composite lifting robot** with multi-distribution support.
+
+### 🎯 ROS2 Distribution Support
+
+| Distribution | Ubuntu | Status | Recommended Use | Original R2D3 Support |
+|--------------|--------|--------|-----------------|----------------------|
+| **Foxy** | 20.04 | ✅ Supported | Original development, legacy systems | ✅ Native (Original target) |
+| **Humble** | 22.04 | ✅ **Recommended** | Production use, best stability | ✅ Adapted |
+| **Jazzy** | 24.04 | ✅ Supported | Latest features, cutting-edge | ✅ Adapted |
+
+**Recommendation**: Use **Foxy or Humble** for the best balance of stability and features. The original R2D3 was designed for Foxy, and all packages have been adapted to work with newer distributions.
+
+### 📋 Requirements
 
 * The supported robotic arm controller version is 1.6.5 or above.
-* The Ubuntu version is 20.04.
-* The ROS2 version is foxy.
+* Ubuntu 20.04+ (depending on ROS2 distribution)
+* ROS2 Foxy, Humble, or Jazzy
 
 | Embodied double-arm lifting robot (7-axis)                                        |                                                     |                                                              |
 | ------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------ |
@@ -30,20 +42,89 @@ For more information about the bot topic service function, see[List of services 
 
 The following is the installation and use tutorial of the package.
 
-## Docker Implementation
+## 🐳 Docker Implementation
 
-For containerized deployment and development, this project includes Docker support. The Docker setup provides a complete ROS2 Foxy environment with NVIDIA GPU support.
+This project provides a comprehensive containerized ROS2 development environment with **multi-distribution support** (Foxy, Humble, Jazzy) specifically configured for the **OpenDroids R2D3 dual-arm composite lifting robot**.
 
-**Quick Start:**
+### 🚀 Quick Start
+
+**Option 1: Docker Compose (Recommended)**
 ```bash
-# Build the Docker image
-docker build -t r2d3_ros2:foxy ./Docker
+# One-command setup and start
+make setup && make start
 
-# Run with GPU support
-docker run -it --rm --gpus all r2d3_ros2:foxy
+# Open shell in container
+make shell
+
+# Setup R2D3 packages
+~/scripts/setup_r2d3.sh
 ```
 
-For detailed Docker instructions, prerequisites, troubleshooting, and advanced usage, please refer to the [Docker README](Docker/README.md).
+**Option 2: Choose Your ROS2 Distribution**
+```bash
+# Original R2D3 (Foxy)
+make start DISTRO=foxy
+
+# Recommended for production (Humble) 
+make start DISTRO=humble
+
+# Latest features (Jazzy)
+make start DISTRO=jazzy
+```
+
+### 🎯 Key Features
+
+- **Multi-Distribution Support**: Foxy (original), Humble (recommended), Jazzy (latest)
+- **Complete R2D3 Environment**: All robot packages pre-configured and ready
+- **GUI Support**: Full X11 forwarding for RViz, Gazebo, and rqt tools
+- **Audio Support**: PulseAudio integration for robot audio feedback
+- **MoveIt2 Integration**: Motion planning and manipulation capabilities
+- **Camera Support**: Intel RealSense D435 camera integration
+- **Cross-Platform**: Works on Linux, macOS, and Windows (with WSL2)
+
+### 📋 Prerequisites
+
+```bash
+# Install Docker and Docker Compose
+sudo apt update && sudo apt install docker.io docker-compose-plugin
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+# Log out and back in for group changes to take effect
+```
+
+### 🛠️ Essential Commands
+
+```bash
+# Environment Management
+make help              # Show all available commands
+make setup             # Setup host environment (X11, PulseAudio)
+make start              # Start default (Humble) environment
+make start DISTRO=foxy  # Start specific distribution
+make shell              # Open shell in running container
+make stop               # Stop environment
+make restart            # Restart environment
+make status             # Check container status
+
+# Development
+make build              # Build images
+make logs               # View container logs
+make clean              # Clean up everything
+
+# R2D3 Operations (inside container)
+r2d3_camera            # Launch camera
+r2d3_demo              # Launch robot demo
+r2d3_build             # Build workspace
+r2d3_ws                # Go to workspace
+```
+
+### 📚 Documentation
+
+For comprehensive Docker documentation, see:
+- **[Docker README](Docker/readme.md)** - Complete Docker setup guide
+- **[Quick Start Guide](Docker/QUICKSTART.md)** - 5-minute setup tutorial
+- **[Distribution Guide](Docker/DISTRO_GUIDE.md)** - ROS2 distribution details
+- **[Workspace Overview](Docker/WORKSPACE_OVERVIEW.md)** - Project structure guide
 
 ---
 
@@ -252,6 +333,41 @@ Please refer to the following operation specifications when using the robotic ar
 * Place the robotic arm in a safe location when not in use to avoid it from falling down and damaging or injuring other objects during vibration.
 * Disconnect the robotic arm from the power supply in time when not in use.
 
+### 🐛 Docker Troubleshooting
+
+**Container won't start:**
+```bash
+# Check Docker is running
+sudo systemctl start docker
+
+# Check permissions
+groups $USER  # Should include 'docker'
+```
+
+**GUI applications don't show:**
+```bash
+# Setup X11 forwarding
+make setup
+# Or manually:
+xhost +local:docker
+```
+
+**Audio doesn't work:**
+```bash
+# Start PulseAudio
+pulseaudio --start
+
+# Check audio devices in container
+aplay -l
+```
+
+**Build failures:**
+```bash
+# Clean and rebuild
+make clean
+make build
+```
+
 ### Version update
 
 | Revision | Content Update | Effective Date |
@@ -261,6 +377,7 @@ Please refer to the following operation specifications when using the robotic ar
 | V1.1.1 | 1. Improved the overall linkage demo 2. Modified the left-hand installation direction bug in urdf 3. Optimized the camera code | 2024-12-12 |
 | V1.1.2 | 1. Added visual crawling demo | 2024-12-24 |
 | V1.1.3 | 1. Added chassis function package when enlightenment | 2025-01-02 |
+| V1.2.0 | 1. **Major Docker Update**: Multi-distribution support (Foxy, Humble, Jazzy) 2. Comprehensive Docker Compose setup 3. Enhanced development environment with GUI and audio support 4. Updated documentation and quick start guides | 2025-01-15 |
 
 ### Common problem
 1. exec:sudo bash ros2_install.sh
