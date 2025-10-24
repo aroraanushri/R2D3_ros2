@@ -67,12 +67,12 @@ make build DISTRO=humble    # Build production image
 make start DISTRO=humble    # Start with specific distro
 ```
 
-### 4. Multi-Distribution Testing
+### 4. Multi-Distribution Development
 ```bash
 make build-all              # Build all distributions
-make start DISTRO=foxy      # Test with Foxy
-make start DISTRO=humble    # Test with Humble
-make start DISTRO=jazzy     # Test with Jazzy
+make start DISTRO=foxy      # Develop with Foxy
+make start DISTRO=humble    # Develop with Humble
+make start DISTRO=jazzy     # Develop with Jazzy
 ```
 
 ## 🎯 Key Features
@@ -169,7 +169,7 @@ docker images              # List all images
 
 1. **Fork** the repository
 2. **Create** a feature branch
-3. **Test** with multiple distributions
+3. **Develop** with multiple distributions
 4. **Document** your changes
 5. **Submit** a pull request
 

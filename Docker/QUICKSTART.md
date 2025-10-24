@@ -21,9 +21,6 @@ make shell DISTRO=foxy
 
 # 4. Setup R2D3 packages
 ~/scripts/setup_r2d3.sh
-
-# 5. Test R2D3 installation
-~/r2d3_scripts/test_installation.sh
 ```
 
 That's it! You now have a fully functional R2D3 robot development environment.
@@ -69,14 +66,14 @@ r2d3_ws                # Go to workspace
 Once inside the container:
 
 ```bash
-# Test camera
+# Launch camera
 r2d3_camera
 
 # In another terminal (make shell)
 # Launch robot demo
 r2d3_demo
 
-# Test visual grasping
+# Launch visual grasping
 ros2 run ros2_total_demo catch2object_gripper.py
 ```
 

@@ -287,17 +287,48 @@ sudo apt update
 sudo apt install -y ros-${ROS_DISTRO}-warehouse-ros-mongo || log_warning "Failed to install warehouse-ros-mongo"
 sudo apt install -y v4l-utils || log_warning "Failed to install v4l-utils"
 
+# Remove servo driver directory
+log_info "Removing servo driver directory..."
+rm -rf /home/ros/ros2_ws/src/ros2_servo_driver/servo_driver
+rm -rf /home/ros/ros2_ws/src/ros2_servo_driver/servo_example
+log_success "Servo driver directory removed"
+
 # 6. Build the workspace
 log_info "Building ROS2 workspace..."
 cd "$WORKSPACE_DIR"
 
-# Source ROS2 environment
-source /opt/ros/${ROS_DISTRO}/setup.bash
-
-# Fix AMENT_TRACE_SETUP_FILES error for Foxy
-if [ "$ROS_DISTRO" = "foxy" ]; then
-    export AMENT_TRACE_SETUP_FILES=0
+# Verify we're in the correct directory
+log_info "Current directory: $(pwd)"
+log_info "Workspace directory: $WORKSPACE_DIR"
+if [ "$(pwd)" != "$WORKSPACE_DIR" ]; then
+    log_error "Failed to change to workspace directory!"
+    exit 1
 fi
+
+# Source ROS2 environment
+# Fix ALL common ROS2 unbound variable errors before sourcing
+# AMENT variables
+export AMENT_TRACE_SETUP_FILES=0
+export AMENT_PYTHON_EXECUTABLE=/usr/bin/python3
+export AMENT_PREFIX_PATH=""
+export AMENT_ENVIRONMENT_HOOKS=""
+
+# COLCON variables
+export COLCON_TRACE=0
+export COLCON_PREFIX_PATH=""
+export COLCON_PYTHON_EXECUTABLE=/usr/bin/python3
+
+# ROS2 variables
+export ROS_PYTHON_VERSION=3
+
+# Additional variables that might cause issues
+export AMENT_CURRENT_PREFIX=""
+export AMENT_SHELL_HOOKS=""
+export CMAKE_PREFIX_PATH=""
+export LD_LIBRARY_PATH=""
+export PYTHONPATH=""
+
+source /opt/ros/${ROS_DISTRO}/setup.bash
 
 # Build specific packages first to resolve dependencies
 log_info "Building interface packages first..."
@@ -306,7 +337,7 @@ colcon build --packages-select realsense2_camera_msgs || log_warning "realsense2
 colcon build --packages-select servo_interfaces || log_warning "servo_interfaces build may have failed"
 
 # Source the built packages
-source install/setup.bash
+source "$WORKSPACE_DIR/install/setup.bash"
 
 # Build all packages
 log_info "Building all packages..."
@@ -352,23 +383,6 @@ log_info "Performing final setup..."
 # Source the workspace for current session
 source "$WORKSPACE_DIR/install/setup.bash"
 
-# Create a simple test script
-cat > "$USER_HOME/r2d3_scripts/test_installation.sh" << 'EOF'
-#!/bin/bash
-echo "Testing R2D3 installation..."
-source ~/ros2_ws/install/setup.bash
-
-echo "Checking ROS2 packages..."
-ros2 pkg list | grep -E "(rm_|realsense|servo)" | head -10
-
-echo "Checking for R2D3 launch files..."
-find ~/ros2_ws/install -name "*.launch.py" | grep -E "(total_demo|rs_launch)" | head -5
-
-echo "Installation test completed!"
-EOF
-
-chmod +x "$USER_HOME/r2d3_scripts/test_installation.sh"
-
 # 11. Display completion message
 clear
 echo ""
@@ -387,9 +401,8 @@ echo "  r2d3_demo        - Launch demo"
 echo ""
 echo -e "${YELLOW}Quick Start:${NC}"
 echo "  1. Open a new terminal (to load new environment)"
-echo "  2. Test installation: ~/r2d3_scripts/test_installation.sh"
-echo "  3. Launch camera: r2d3_camera"
-echo "  4. Launch demo: r2d3_demo"
+echo "  2. Launch camera: r2d3_camera"
+echo "  3. Launch demo: r2d3_demo"
 echo ""
 echo -e "${YELLOW}Documentation:${NC}"
 echo "  - R2D3 README: ~/ros2_ws/src/README.md"

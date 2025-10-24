@@ -142,7 +142,7 @@ make setup
 - **Mobile Base**: Woosh AGV chassis for autonomous navigation
 - **Object Manipulation**: Visual object detection and grasping capabilities
 - **Voice Interface**: Microphone array for voice commands and feedback
-- **Simulation Support**: Gazebo simulation environment for testing
+- **Simulation Support**: Gazebo simulation environment for development
 
 ### Development Features
 - **Automated Setup**: Complete R2D3 environment setup with one command
@@ -269,7 +269,6 @@ ros2 run ros2_total_demo catch2object_aoyi_hand.py
 
 ### Launch Scripts
 Pre-built scripts are available in `~/r2d3_scripts/`:
-- `test_installation.sh` - Test R2D3 installation
 
 ## Development
 

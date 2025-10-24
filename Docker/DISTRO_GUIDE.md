@@ -66,7 +66,7 @@ This guide helps you choose and use the right ROS2 distribution for your R2D3 ro
 - **Best for**: Reproducing original R2D3 behavior, legacy systems
 
 ### Humble (Recommended)
-- **Pros**: LTS support until 2027, stable, well-tested
+- **Pros**: LTS support until 2027, stable, well-supported
 - **Cons**: Some newer features not available
 - **Best for**: Production deployments, stable development
 
@@ -134,7 +134,7 @@ source ~/ros2_ws/install/setup.bash
 ### From Humble to Jazzy  
 - Check for deprecated APIs
 - Update package.xml format if needed
-- Test thoroughly due to newer packages
+- Verify thoroughly due to newer packages
 
 ## Support
 
