@@ -6,14 +6,18 @@ Get up and running with the R2D3 robot in under 5 minutes!
 
 ```bash
 # 1. Clone and enter directory
-git clone <your-repo-url> life_of_droids
-cd life_of_droids
+git clone https://github.com/Open-Droids-robot/R2D3_ros2.git
+cd R2D3_ros2/Docker
 
 # 2. One command setup and start
-make setup && make start
+make setup && make start DISTRO=foxy
 
 # 3. Open shell in container
-make shell
+make shell DISTRO=foxy
+
+# Note: Container hostname will automatically use your system hostname
+# instead of the default r2d3-foxy. This ensures proper ROS2 node identification.
+
 
 # 4. Setup R2D3 packages
 ~/scripts/setup_r2d3.sh
@@ -109,6 +113,28 @@ aplay -l
 # Clean and rebuild
 make clean
 make build
+```
+
+### Hostname issues
+```bash
+# Container hostname automatically uses your system hostname
+# To override, set HOSTNAME environment variable:
+HOSTNAME=my-custom-hostname make start DISTRO=humble
+
+# Check current hostname:
+hostname
+```
+
+### Permission denied errors
+```bash
+# If you get "Permission denied" when creating workspace:
+make fix-permissions DISTRO=humble
+
+# This ensures the ros user has full access to all files and directories
+# The ros user can now create, edit, and delete any file in the container
+
+# Or restart the container to apply permission fixes:
+make restart DISTRO=humble
 ```
 
 ## 📚 Next Steps

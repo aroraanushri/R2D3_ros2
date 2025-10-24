@@ -7,6 +7,9 @@
 # Default distribution
 DISTRO ?= humble
 
+# Auto-detect hostname
+HOSTNAME ?= $(shell hostname)
+
 # Colors
 BLUE := \033[0;34m
 GREEN := \033[0;32m
@@ -63,9 +66,9 @@ start: setup ## Start R2D3 environment (default: humble)
 		COMPOSE_CMD="docker compose"; \
 	fi; \
 	if [ "$(DISTRO)" = "humble" ]; then \
-		$$COMPOSE_CMD --profile default up -d; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile default up -d; \
 	else \
-		$$COMPOSE_CMD --profile $(DISTRO) up -d; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile $(DISTRO) up -d; \
 	fi
 	@echo "$(GREEN)R2D3 $(DISTRO) environment started!$(NC)"
 	@echo "$(BLUE)Connect with: make shell DISTRO=$(DISTRO)$(NC)"
@@ -78,9 +81,9 @@ stop: ## Stop R2D3 environment
 		COMPOSE_CMD="docker compose"; \
 	fi; \
 	if [ "$(DISTRO)" = "humble" ]; then \
-		$$COMPOSE_CMD --profile default down; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile default down; \
 	else \
-		$$COMPOSE_CMD --profile $(DISTRO) down; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile $(DISTRO) down; \
 	fi
 	@echo "$(GREEN)R2D3 $(DISTRO) environment stopped!$(NC)"
 
@@ -98,9 +101,9 @@ build: ## Build R2D3 images
 		COMPOSE_CMD="docker compose"; \
 	fi; \
 	if [ "$(DISTRO)" = "humble" ]; then \
-		$$COMPOSE_CMD --profile default build --no-cache; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile default build --no-cache; \
 	else \
-		$$COMPOSE_CMD --profile $(DISTRO) build --no-cache; \
+		HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD --profile $(DISTRO) build --no-cache; \
 	fi
 	@echo "$(GREEN)R2D3 $(DISTRO) image built!$(NC)"
 
@@ -144,6 +147,20 @@ clean: ## Clean up containers, images, and volumes
 	@docker volume ls --format "{{.Name}}" --filter "name=r2d3_" | xargs -r docker volume rm
 	@echo "$(GREEN)R2D3 environment cleaned up!$(NC)"
 
+fix-permissions: ## Fix permission issues in existing containers
+	@echo "$(BLUE)Fixing permissions in R2D3 containers...$(NC)"
+	@if docker ps --format "table {{.Names}}" | grep -q "^r2d3-$(DISTRO)$$"; then \
+		echo "$(BLUE)Container r2d3-$(DISTRO) is running, fixing permissions...$(NC)"; \
+		docker exec r2d3-$(DISTRO) sudo chown -R ros:ros /home/ros 2>/dev/null || true; \
+		docker exec r2d3-$(DISTRO) sudo chmod -R 755 /home/ros 2>/dev/null || true; \
+		docker exec r2d3-$(DISTRO) sudo mkdir -p /home/ros/ros2_ws/src; \
+		docker exec r2d3-$(DISTRO) sudo chown -R ros:ros /home/ros/ros2_ws; \
+		docker exec r2d3-$(DISTRO) sudo chmod -R 755 /home/ros/ros2_ws; \
+		echo "$(GREEN)Permissions fixed! ros user now has full access to all files.$(NC)"; \
+	else \
+		echo "$(YELLOW)Container r2d3-$(DISTRO) is not running. Start it first with: make start DISTRO=$(DISTRO)$(NC)"; \
+	fi
+
 # Distribution-specific shortcuts
 start-foxy: ## Start Foxy environment
 	@$(MAKE) start DISTRO=foxy
@@ -161,7 +178,7 @@ build-all: ## Build all distribution images
 	else \
 		COMPOSE_CMD="docker compose"; \
 	fi; \
-	$$COMPOSE_CMD build --no-cache
+	HOSTNAME=$(HOSTNAME) $$COMPOSE_CMD build --no-cache
 	@echo "$(GREEN)All R2D3 images built!$(NC)"
 
 # Development shortcuts

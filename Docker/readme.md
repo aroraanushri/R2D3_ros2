@@ -269,9 +269,6 @@ ros2 run ros2_total_demo catch2object_aoyi_hand.py
 
 ### Launch Scripts
 Pre-built scripts are available in `~/r2d3_scripts/`:
-- `launch_camera.sh` - Start camera system
-- `launch_demo.sh` - Start robot demo
-- `launch_visual_capture.sh` - Start visual grasping
 - `test_installation.sh` - Test R2D3 installation
 
 ## Development

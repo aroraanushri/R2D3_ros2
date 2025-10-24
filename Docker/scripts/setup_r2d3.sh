@@ -107,8 +107,6 @@ fi
 
 # Install additional dependencies for camera and vision
 sudo apt-get install -y \
-    librealsense2-dev \
-    librealsense2-utils \
     python3-opencv \
     python3-numpy \
     python3-scipy \
@@ -137,7 +135,33 @@ log_success "Additional ROS2 packages installed"
 # 2. Create ROS2 workspace
 log_info "Setting up ROS2 workspace..."
 
-mkdir -p "$WORKSPACE_DIR/src"
+# Ensure workspace directory exists and has correct permissions
+if [ ! -d "$WORKSPACE_DIR" ]; then
+    log_info "Creating workspace directory..."
+    mkdir -p "$WORKSPACE_DIR/src" || {
+        log_warning "Failed to create workspace directory, trying with sudo..."
+        sudo mkdir -p "$WORKSPACE_DIR/src"
+        sudo chown -R "$USERNAME:$USERNAME" "$WORKSPACE_DIR"
+        sudo chmod -R 755 "$WORKSPACE_DIR"
+    }
+else
+    log_info "Workspace directory exists, ensuring src directory exists..."
+    # Ensure src directory exists even if workspace directory exists
+    if [ ! -d "$WORKSPACE_DIR/src" ]; then
+        log_info "Creating src directory..."
+        mkdir -p "$WORKSPACE_DIR/src" || {
+            log_warning "Failed to create src directory, trying with sudo..."
+            sudo mkdir -p "$WORKSPACE_DIR/src"
+        }
+    fi
+    sudo chown -R "$USERNAME:$USERNAME" "$WORKSPACE_DIR" 2>/dev/null || true
+    sudo chmod -R 755 "$WORKSPACE_DIR" 2>/dev/null || true
+fi
+
+# Ensure ros user owns everything in the workspace
+sudo chown -R "$USERNAME:$USERNAME" "$WORKSPACE_DIR" 2>/dev/null || true
+sudo chmod -R 755 "$WORKSPACE_DIR" 2>/dev/null || true
+
 cd "$WORKSPACE_DIR"
 
 # Clone R2D3 packages to workspace
@@ -167,6 +191,11 @@ if [ -d "R2D3_ros2" ]; then
     rm -rf R2D3_ros2
     log_success "R2D3 packages organized in workspace"
 fi
+
+# Ensure all packages have proper permissions
+log_info "Setting proper permissions for all packages..."
+sudo chown -R "$USERNAME:$USERNAME" "$WORKSPACE_DIR/src" 2>/dev/null || true
+sudo chmod -R 755 "$WORKSPACE_DIR/src" 2>/dev/null || true
 
 # 3. Install RM robot arm libraries
 log_info "Installing RM robot arm libraries..."
@@ -227,9 +256,36 @@ fi
 # Update rosdep
 rosdep update || log_warning "rosdep update may have failed"
 
+# Add missing rosdep definitions
+log_info "Adding missing rosdep definitions..."
+sudo mkdir -p /etc/ros/rosdep/sources.list.d
+echo "yaml https://raw.githubusercontent.com/ros/rosdistro/master/rosdep/base.yaml" | sudo tee -a /etc/ros/rosdep/sources.list.d/20-default.list
+echo "yaml https://raw.githubusercontent.com/ros/rosdistro/master/rosdep/python.yaml" | sudo tee -a /etc/ros/rosdep/sources.list.d/20-default.list
+echo "yaml https://raw.githubusercontent.com/ros/rosdistro/master/rosdep/ruby.yaml" | sudo tee -a /etc/ros/rosdep/sources.list.d/20-default.list
+
+# Add custom rosdep rules for missing packages
+sudo mkdir -p /etc/ros/rosdep/rules.d
+cat << 'EOF' | sudo tee /etc/ros/rosdep/rules.d/50-custom.rules
+# Custom rosdep rules for R2D3
+warehouse_ros_mongo:
+  ubuntu:
+    foxy: [ros-foxy-warehouse-ros-mongo]
+    humble: [ros-humble-warehouse-ros-mongo]
+    jazzy: [ros-jazzy-warehouse-ros-mongo]
+EOF
+
+# Update rosdep again with new rules
+rosdep update || log_warning "rosdep update may have failed"
+
 # Install dependencies
 log_info "Installing ROS dependencies with rosdep..."
 rosdep install --from-paths src --ignore-src -r -y || log_warning "Some rosdep dependencies may have failed"
+
+# Install additional packages manually
+log_info "Installing additional required packages..."
+sudo apt update
+sudo apt install -y ros-${ROS_DISTRO}-warehouse-ros-mongo || log_warning "Failed to install warehouse-ros-mongo"
+sudo apt install -y v4l-utils || log_warning "Failed to install v4l-utils"
 
 # 6. Build the workspace
 log_info "Building ROS2 workspace..."
@@ -237,6 +293,11 @@ cd "$WORKSPACE_DIR"
 
 # Source ROS2 environment
 source /opt/ros/${ROS_DISTRO}/setup.bash
+
+# Fix AMENT_TRACE_SETUP_FILES error for Foxy
+if [ "$ROS_DISTRO" = "foxy" ]; then
+    export AMENT_TRACE_SETUP_FILES=0
+fi
 
 # Build specific packages first to resolve dependencies
 log_info "Building interface packages first..."
@@ -285,40 +346,6 @@ if ! grep -q "# R2D3 Robot Aliases" "$USER_HOME/.bashrc"; then
     log_success "Added R2D3 aliases to .bashrc"
 fi
 
-# 9. Create launch scripts
-log_info "Creating launch scripts..."
-
-# Create a directory for launch scripts
-mkdir -p "$USER_HOME/r2d3_scripts"
-
-# Camera launch script
-cat > "$USER_HOME/r2d3_scripts/launch_camera.sh" << 'EOF'
-#!/bin/bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch realsense2_camera rs_launch.py
-EOF
-
-# Demo launch script
-cat > "$USER_HOME/r2d3_scripts/launch_demo.sh" << 'EOF'
-#!/bin/bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch ros2_total_demo total_demo.launch.py
-EOF
-
-# Visual capture script
-cat > "$USER_HOME/r2d3_scripts/launch_visual_capture.sh" << 'EOF'
-#!/bin/bash
-source ~/ros2_ws/install/setup.bash
-echo "Starting visual capture demo..."
-echo "Make sure the camera is running first!"
-ros2 run ros2_total_demo catch2object_gripper.py
-EOF
-
-# Make scripts executable
-chmod +x "$USER_HOME/r2d3_scripts/"*.sh
-
-log_success "Launch scripts created in ~/r2d3_scripts/"
-
 # 10. Final setup and verification
 log_info "Performing final setup..."
 
@@ -350,7 +377,6 @@ echo -e "${GREEN}R2D3 Robot Setup Completed Successfully!${NC}"
 echo "=================================================================="
 echo ""
 echo -e "${BLUE}Workspace Location:${NC} $WORKSPACE_DIR"
-echo -e "${BLUE}Launch Scripts:${NC} ~/r2d3_scripts/"
 echo ""
 echo -e "${YELLOW}Available Commands:${NC}"
 echo "  r2d3_ws          - Navigate to workspace"

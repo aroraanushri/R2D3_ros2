@@ -12,7 +12,7 @@ services:
         USER_GID: ${USER_GID:-1000}
     image: ros2-humble-r2d3:latest
     container_name: r2d3-humble
-    hostname: r2d3-humble
+    hostname: ${HOSTNAME}
     restart: unless-stopped
     privileged: true
     network_mode: host
@@ -59,6 +59,13 @@ services:
           sudo mkdir -p /run/user/1000/pulse
           sudo chown -R ros:ros /run/user/1000
           sudo chmod 700 /run/user/1000/pulse
+          # Ensure ros user owns everything in home directory
+          sudo chown -R ros:ros /home/ros
+          sudo chmod -R 755 /home/ros
+          # Ensure workspace directory exists and is owned by ros
+          sudo mkdir -p /home/ros/ros2_ws/src
+          sudo chown -R ros:ros /home/ros/ros2_ws
+          sudo chmod -R 755 /home/ros/ros2_ws
           /home/ros/scripts/setup_devcontainer.sh
           /home/ros/scripts/setup_r2d3.sh
           touch /home/ros/ros2_ws/.setup_complete
@@ -91,7 +98,7 @@ services:
         USER_GID: ${USER_GID:-1000}
     image: ros2-foxy-r2d3:latest
     container_name: r2d3-foxy
-    hostname: r2d3-foxy
+    hostname: ${HOSTNAME}
     restart: unless-stopped
     privileged: true
     network_mode: host
@@ -153,7 +160,7 @@ services:
         USER_GID: ${USER_GID:-1000}
     image: ros2-jazzy-r2d3:latest
     container_name: r2d3-jazzy
-    hostname: r2d3-jazzy
+    hostname: ${HOSTNAME}
     restart: unless-stopped
     privileged: true
     network_mode: host
@@ -200,6 +207,13 @@ services:
           sudo mkdir -p /run/user/1000/pulse
           sudo chown -R ros:ros /run/user/1000
           sudo chmod 700 /run/user/1000/pulse
+          # Ensure ros user owns everything in home directory
+          sudo chown -R ros:ros /home/ros
+          sudo chmod -R 755 /home/ros
+          # Ensure workspace directory exists and is owned by ros
+          sudo mkdir -p /home/ros/ros2_ws/src
+          sudo chown -R ros:ros /home/ros/ros2_ws
+          sudo chmod -R 755 /home/ros/ros2_ws
           /home/ros/scripts/setup_devcontainer.sh
           /home/ros/scripts/setup_r2d3.sh
           touch /home/ros/ros2_ws/.setup_complete
